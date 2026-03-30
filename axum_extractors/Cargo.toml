@@ -1,0 +1,17 @@
+[package]
+name = "axum_extractors"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.8"
+ciborium = "0.2.2"
+cookie = { version = "0.18.1", features = ["percent-encode", "secure"] }
+mime = "0.3.17"
+serde = "1.0.228"
+simple_deref = { version = "0.1.0", path = "../simple_deref" }
+thiserror = "2.0.18"
+tracing = "0.1.44"
+
+[lints]
+workspace = true
