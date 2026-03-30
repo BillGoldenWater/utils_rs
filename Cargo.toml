@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["axum_extractors", "simple_deref"]
+members = ["axum_extractors", "signed_data", "simple_deref"]
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
