@@ -18,6 +18,12 @@ pub struct Cbor<T>(pub T);
 
 impl_deref!(impl<T> ref Cbor<T> => T = .0);
 
+impl<T> From<T> for Cbor<T> {
+    fn from(value: T) -> Self {
+        Self(value)
+    }
+}
+
 impl<T, S> OptionalFromRequest<S> for Cbor<T>
 where
     T: DeserializeOwned,
