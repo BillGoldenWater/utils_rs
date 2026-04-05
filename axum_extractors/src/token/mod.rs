@@ -15,9 +15,19 @@ use signed_data::SignedData;
 use simple_deref::impl_deref;
 use time::OffsetDateTime;
 
+pub trait State
+where
+    Self: Send + Sync,
+{
+    fn get_signing_key(&self) -> Cow<'_, SigningKey>;
+    fn get_verifying_key(&self) -> Cow<'_, VerifyingKey> {
+        Cow::Owned(self.get_signing_key().verifying_key())
+    }
+}
+
 pub trait CustomToken<S>
 where
-    S: Send + Sync,
+    S: State + Send + Sync,
 {
     const COOKIE_NAME: &'static str;
     const SECURE: bool = true;
@@ -26,9 +36,11 @@ where
     const PATH: &'static str = "/";
 
     fn get_expires_when(&self) -> OffsetDateTime;
-    fn signing_key_from_state(state: &S) -> Cow<'_, SigningKey>;
+    fn signing_key_from_state(state: &S) -> Cow<'_, SigningKey> {
+        state.get_signing_key()
+    }
     fn verifying_key_from_state(state: &S) -> Cow<'_, VerifyingKey> {
-        Cow::Owned(Self::signing_key_from_state(state).verifying_key())
+        state.get_verifying_key()
     }
 }
 
@@ -44,7 +56,7 @@ pub struct Token<T, S> {
 impl<T, S> Token<T, S>
 where
     T: CustomToken<S>,
-    S: Send + Sync,
+    S: State + Send + Sync,
 {
     #[must_use]
     pub const fn new(inner: T) -> Self {
@@ -84,7 +96,7 @@ impl_deref!(impl<T, S> ref Token<T, S> => T = .inner);
 impl<T, S> OptionalFromRequestParts<S> for Token<T, S>
 where
     T: DeserializeOwned + CustomToken<S>,
-    S: Send + Sync,
+    S: State + Send + Sync,
 {
     type Rejection = TokenRejection;
 
@@ -132,7 +144,7 @@ where
 impl<T, S> FromRequestParts<S> for Token<T, S>
 where
     T: DeserializeOwned + CustomToken<S> + 'static,
-    S: Send + Sync + 'static,
+    S: State + Send + Sync + 'static,
 {
     type Rejection = TokenRejection;
 
