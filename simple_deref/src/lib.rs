@@ -31,10 +31,18 @@
 /// let mut something = Something { inner: 1234 };
 /// assert_eq!(*something, 1234);
 /// ```
+///
+/// ```
+/// struct Something(i32);
+///
+/// simple_deref::impl_deref!(mut Something => i32 = .0);
+/// let mut something = Something(1234);
+/// assert_eq!(*something, 1234);
+/// ```
 #[macro_export]
 macro_rules! impl_deref {
     ($(impl<$($ge:ident),*>)? mut $src:path => $dst:path = $($tt:tt)*) => {
-        impl_deref!($(impl<$($ge),*>)? ref $src => $dst = $($tt)*);
+        $crate::impl_deref!($(impl<$($ge),*>)? ref $src => $dst = $($tt)*);
 
         impl$(<$($ge),*>)? ::core::ops::DerefMut for $src {
             fn deref_mut(&mut self) -> &mut Self::Target {
