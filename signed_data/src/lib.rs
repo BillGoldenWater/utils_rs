@@ -47,7 +47,6 @@ impl<T> SignedData<T> {
     /// # Errors
     ///
     /// if signature is invalid,
-    /// or failed to deserialize data into [`T`]
     pub fn to_verified_raw(
         &self,
         key: &VerifyingKey,
@@ -59,7 +58,6 @@ impl<T> SignedData<T> {
     /// # Errors
     ///
     /// if signature is invalid,
-    /// or failed to deserialize data into [`T`]
     pub fn into_verified_raw(
         self,
         key: &VerifyingKey,
