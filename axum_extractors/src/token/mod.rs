@@ -66,6 +66,11 @@ where
         }
     }
 
+    #[must_use]
+    pub fn into_inner(self) -> T {
+        self.inner
+    }
+
     /// # Errors
     ///
     /// if [`T`] failed to serialize
